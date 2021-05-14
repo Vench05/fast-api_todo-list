@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+    <div class="col-md-5 position-absolute top-50 start-50 translate-middle card-container" >
+        <div class="card shadow p-3 mb-5 rounded my-card">
+            <div class="card-body">
+                <h1 class="card-title text-center">Fastapi - Todo-list</h1>
+                <form action="/todo" method="POST">
+                    <input type="text" class="form-control add-task" name="name" placeholder="New Task..." >
+                </form>
+                <ul class="nav nav-pills todo-nav">
+                    <li role="presentation" class="nav-item all-task active"><a href="#" class="nav-link"></a></li>
+                    <li role="presentation" class="nav-item active-task"><a href="#" class="nav-link"></a></li>
+                    <li role="presentation" class="nav-item completed-task"><a href="#" class="nav-link"></a></li>
+                </ul>
+                <div class="todo-list">
+                        <ul class="list-group list-group-flush">
+                            {% for item in data %}
+                            <li class="list-group-item">
+                                <div class="row justify-content-around">
+                                    <div class="col">
+                                        {% if item['done'] == True %}
+                                            <p class="text-md-start task-done1 form-control" id="{{item['id']}}" >{{item['name']}}</p>
+                                        {% else %}
+                                            <p><input type="text" value="{{item['name']}}" disabled id="{{item['id']}}" class="form-control" /></p>
+                                        {% endif %}
+                                        
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-success btn-sm"
+                                                 data-done="{{item['done']}}" 
+                                                 onclick="doneReq(this)" 
+                                                 data-id="{{item['id']}}" 
+                                                 data-value="{{item['name']}}"
+                                        >
+                                            Done
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" data-id="{{item['id']}}" onclick="deleteReq(this)">X</button>
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %} 
+                          </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- <div class="position-absolute top-50 start-50 translate-middle">
+<div class="card" style="width: 18rem;">.
+    
+    {% for item in data %}
+    <div class="card-body">
+            <h5 class="card-title">{{item['name']}}</h5>
+            <p class="card-text">{{item['name']}} Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam, nemo.</p>
+            <input type="button" value="Delete">
+            <input type="button" value="Done">
+    </div>
+    
+    {% endfor %} 
+
+    
+</div>
+</div> -->
+
+
+{% endblock %}
