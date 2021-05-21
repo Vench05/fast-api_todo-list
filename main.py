@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+import db
 
 from api import todo
 
@@ -12,8 +13,13 @@ templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
 
+#connect to database on startup
+
+
+
 app.include_router(todo.router)
 app.mount("/static", StaticFiles(directory="static"), name='static')
+
 
 @app.get("/", response_class=HTMLResponse, tags=['pages'])
 def index(req: Request):

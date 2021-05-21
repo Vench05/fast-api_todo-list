@@ -8,6 +8,7 @@
                 <h1 class="card-title text-center">Fastapi - Todo-list</h1>
                 <form action="/todo" method="POST">
                     <input type="text" class="form-control add-task" name="name" placeholder="New Task..." >
+                    <input type="radio" class="form-control add-task" name="done">
                 </form>
                 <ul class="nav nav-pills todo-nav">
                     <li role="presentation" class="nav-item all-task active"><a href="#" class="nav-link"></a></li>
@@ -33,6 +34,7 @@
                                                  onclick="doneReq(this)" 
                                                  data-id="{{item['id']}}" 
                                                  data-value="{{item['name']}}"
+        
                                         >
                                             Done
                                         </button>

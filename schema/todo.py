@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 import uuid
 
@@ -7,5 +8,5 @@ def get_new_id() -> str:
 class Todo(BaseModel):
     id: str = get_new_id()
     name: str
-    done: bool = False
+    done: Optional[bool] = False
     
