@@ -25,10 +25,13 @@ def todos(db: Session = Depends(get_db), limit: int = 10):
 
 @router.post("")
 def add_todo(db: Session = Depends(get_db), name: str = Form(...)):
-    todo = Todo(name=name)
-    db.add(todo)
-    db.commit()
-    db.refresh(todo)
+    new_todo = db.query(Todo).filter(Todo.name == name).limit(1)
+    if not new_todo.first():
+        todo = Todo(name=name)
+        db.add(todo)
+        db.commit()
+        db.refresh(todo)
+        return RedirectResponse(url=("/"), status_code=303)
     return RedirectResponse(url=("/"), status_code=303)
 
 @router.delete("/remove/{id}")
