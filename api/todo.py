@@ -43,4 +43,4 @@ def update_todo(id: int, body: dict, db: Session = Depends(get_db)):
     todo.name = body['name']
     todo.done = body['done']
     db.commit()
-    return todo
+    return RedirectResponse(url=("/"), status_code=303)
