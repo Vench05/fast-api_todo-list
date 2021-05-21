@@ -1,36 +1,46 @@
-from fastapi import APIRouter, Form
+from multiprocessing.sharedctypes import Value
+from fastapi import APIRouter, Depends, Form
+
 from schema.todo import Todo
 from fastapi.responses import RedirectResponse
 import uuid
 
+from database import get_db
+from sqlalchemy.orm import Session
 
-router = APIRouter()
+from models import Todo
+from schema import todo
 
-todo_list = []
+import json
 
 
-@router.get("/todo", tags=["Todo"])
-def todos():
-    return todo_list
+router = APIRouter(
+    tags=['Todo'],
+    prefix='/todo'
+)
 
-@router.post("/todo", tags=["Todo"])
-def add_todo(name: str = Form(...)):
-    todo_list.append(Todo(name=name, id=str(uuid.uuid4())[:5]).__dict__)
+@router.get("")
+def todos(db: Session = Depends(get_db), limit: int = 10):
+    return db.query(Todo).limit(limit).all()
+
+@router.post("")
+def add_todo(db: Session = Depends(get_db), name: str = Form(...)):
+    todo = Todo(name=name)
+    db.add(todo)
+    db.commit()
+    db.refresh(todo)
     return RedirectResponse(url=("/"), status_code=303)
 
-@router.delete("/todo/remove/{id}", tags=["Todo"])
-def delete_todo(id: str):
-    global todo_list
-    new_todo = todo_list.copy()
-    new_todo = [i for i in new_todo if i["id"] != id]
-    todo_list = new_todo
+@router.delete("/remove/{id}")
+def delete_todo(id: int, db: Session = Depends(get_db)):
+    todo = db.query(Todo).filter(Todo.id==id).delete(synchronize_session=False)
+    db.commit()
     return RedirectResponse(url=("/"), status_code=303)
 
-@router.put("/todo/update/{id}", tags=["Todo"])
-def update_todo(id: str, body: dict):
-    global todo_list
-    new_todo = todo_list.copy()
-    new_todo = [i if i["id"] != id else body for i in new_todo]
-    # new_todo.append(body)
-    todo_list = new_todo
-    return todo_list
+@router.put("/update/{id}", response_model=todo.Todo)
+def update_todo(id: int, body: dict, db: Session = Depends(get_db)):
+    todo = db.query(Todo).get(id)
+    todo.name = body['name']
+    todo.done = body['done']
+    db.commit()
+    return todo

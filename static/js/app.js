@@ -15,7 +15,6 @@ function doneReq(data) {
     console.log(task_done);
     const body = {
         "name": task_name,
-        "id": task_id,
         "done": !task_done
     }
     req = new XMLHttpRequest()
